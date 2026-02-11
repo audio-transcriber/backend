@@ -9,5 +9,5 @@ class BytesStorage(ABC):
 
 class MessageBrokerProducer(ABC):
     @abstractmethod
-    async def send(self) -> None:
+    async def send(self, msg: bytes, queue_name: str) -> None:
         pass

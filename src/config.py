@@ -1,13 +1,28 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class MinIOSettings(BaseSettings):
-    minio_endpoint_url: str
-    minio_access_key: str
-    minio_secret_key: str
+    endpoint_url: str
+    access_key: str
+    secret_key: str
 
-    class Config:
-        env_file = '.env'
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        env_prefix='minio_',
+        extra='ignore',
+    )
+
+
+class RabbitMQSettings(BaseSettings):
+    host: str
+    port: int
+
+    model_config = SettingsConfigDict(
+        env_file='.env',
+        env_prefix='rabbitmq_',
+        extra='ignore',
+    )
 
 
 minio_settings = MinIOSettings()
+rabbitmq_settings = RabbitMQSettings()

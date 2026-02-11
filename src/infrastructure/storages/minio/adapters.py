@@ -14,4 +14,3 @@ class MinIOStorage(BytesStorage):
 
     async def save(self, content: bytes, filename: str) -> None:
         self._client.put_object(Bucket=self._bucket_name, Key=filename, Body=content)
-        print('Сохранил в MinIO')

@@ -1,3 +1,4 @@
+from aio_pika import connect_robust
 from boto3 import client as boto3_client
 from botocore.client import Config as BotoConfig
 from dependency_injector import containers, providers
@@ -40,4 +41,13 @@ class MinIOContainer(containers.DeclarativeContainer):
 
 
 class RabbitMQContainer(containers.DeclarativeContainer):
-    producer_adapter = providers.Factory(RabbitMQProducer)
+    host = providers.Dependency()
+    port = providers.Dependency()
+
+    client = providers.Coroutine(
+        connect_robust,
+        host=host,
+        port=port,
+    )
+    producer_client = providers.Resource(client)
+    producer_adapter = providers.Factory(RabbitMQProducer, producer_client)

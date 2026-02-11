@@ -8,4 +8,4 @@ class TranscriptionUseCase:
 
     async def transcribe(self, content: bytes, filename: str) -> None:
         await self._bytes_storage.save(content, filename)
-        await self._message_broker_producer.send()
+        await self._message_broker_producer.send(f'bucket: general: filename: {filename}'.encode(), 'transcription')
