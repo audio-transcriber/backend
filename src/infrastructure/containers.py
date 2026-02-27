@@ -1,25 +1,19 @@
+import socketio
 from aio_pika import connect_robust
 from boto3 import client as boto3_client
 from botocore.client import Config as BotoConfig
 from dependency_injector import containers, providers
 
-from application.transcription.use_cases import TranscriptionUseCase
-from infrastructure.messages.rabbitmq.adapters import RabbitMQProducer
+from infrastructure.messages.rabbitmq.adapters import RabbitMQProducer, RabbitMQConsumer
 from infrastructure.storages.minio.adapters import MinIOStorage
 
 
-class TranscriptionContainer(containers.DeclarativeContainer):
-    wiring_config = containers.WiringConfiguration(modules=['presentation.transcription.route'])
-
-    bytes_storage_container = providers.DependenciesContainer()
-    message_broker_container = providers.DependenciesContainer()
-
-    use_case = providers.Factory(
-        TranscriptionUseCase,
-        providers.Factory(bytes_storage_container.adapter),
-        providers.Factory(
-            message_broker_container.producer_adapter,
-        ),
+class SocketIOContainer(containers.DeclarativeContainer):
+    sio = providers.Singleton(
+        socketio.AsyncServer,
+        async_mode='asgi',
+        transports=['websocket'],
+        cors_allowed_origins='*',
     )
 
 
@@ -50,4 +44,6 @@ class RabbitMQContainer(containers.DeclarativeContainer):
         port=port,
     )
     producer_client = providers.Resource(client)
-    producer_adapter = providers.Factory(RabbitMQProducer, producer_client)
+    consumer_client = providers.Resource(client)
+    producer = providers.Factory(RabbitMQProducer, producer_client)
+    consumer = providers.Factory(RabbitMQConsumer, consumer_client)
