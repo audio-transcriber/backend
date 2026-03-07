@@ -11,7 +11,7 @@ env:
 
 jobs:
   lint:
-    runs-on: [self-hosted, linux, x64]
+    runs-on: self-hosted
     container:
       image: python:3.12-slim
 
@@ -31,7 +31,7 @@ jobs:
         run: uv run ruff check
 
   test:
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: self-hosted
     container:
       image: python:3.12-slim
 
@@ -45,7 +45,7 @@ jobs:
   release:
     if: github.ref == 'refs/heads/main'
     needs: [lint]  # TODO когда появятся тесты включить сюда
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: self-hosted
 
     steps:
       - uses: actions/checkout@v4
