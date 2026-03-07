@@ -7,10 +7,10 @@ from domain.ports import BytesStorage, MessageBrokerProducer
 
 class TranscriptionUseCase:
     def __init__(
-            self,
-            sio: socketio.AsyncServer,
-            bytes_storage: BytesStorage,
-            message_broker_producer: MessageBrokerProducer,
+        self,
+        sio: socketio.AsyncServer,
+        bytes_storage: BytesStorage,
+        message_broker_producer: MessageBrokerProducer,
     ) -> None:
         self._sio = sio
         self._bytes_storage = bytes_storage

@@ -44,7 +44,7 @@ jobs:
 
   release:
     if: github.ref == 'refs/heads/main'
-    needs: [lint, test]
+    needs: [lint]  # TODO когда появятся тесты включить сюда
     runs-on: ubuntu-latest
 
     steps:

@@ -23,7 +23,9 @@ class RabbitMQConsumer:
     def __init__(self, client: aio_pika.RobustConnection) -> None:
         self._client = client
 
-    async def consume(self, queue_name: str, usecase) -> None:  # TODO WTF usecase обязательно должен иметь receive_transcribe???
+    async def consume(
+        self, queue_name: str, usecase: ...
+    ) -> None:  # TODO WTF usecase обязательно должен иметь receive_transcribe???
         channel = await self._client.channel()
         queue = await channel.declare_queue(queue_name, durable=True)
 

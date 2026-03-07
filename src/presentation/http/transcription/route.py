@@ -1,10 +1,10 @@
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, UploadFile
 from starlette.responses import Response
-from starlette.status import HTTP_202_ACCEPTED, HTTP_200_OK
+from starlette.status import HTTP_200_OK, HTTP_202_ACCEPTED
 
-from application.transcription.usecases import TranscriptionUseCase
 from application.containers import TranscriptionContainer
+from application.transcription.usecases import TranscriptionUseCase
 
 route = APIRouter(prefix='/transcription', tags=['Transcription'])
 
@@ -27,8 +27,6 @@ async def get_result(
 ) -> None:
     return Response(
         content=await usecase.get_result(filename, bucket_name),
-        media_type="text/plain",
-        headers={
-            'Content-Disposition': f'attachment; filename={filename}'
-        }
+        media_type='text/plain',
+        headers={'Content-Disposition': f'attachment; filename={filename}'},
     )
