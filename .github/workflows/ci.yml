@@ -43,10 +43,7 @@ jobs:
         run: uv run pytest
 
   release:
-    on:
-      push:
-        branches:
-          - main
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
 
     steps:
