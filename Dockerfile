@@ -11,21 +11,13 @@ RUN --mount=type=cache,target=/root/.cache/uv \
 
 FROM python:3.12-slim
 
-RUN apt-get update && apt-get install -y --no-install-recommends  \
-    net-tools \
-    vim \
-    mc \
-    libcom-err2 \
-    && rm -rf /var/lib/apt/lists/*
-
 WORKDIR /opt/app
 
 COPY --from=builder /opt/app/.venv .venv
-COPY . .
+COPY src .
 
 ENV PATH="/opt/app/.venv/bin:$PATH"
-ENV PYTHONPATH="/opt/app/src"
 ENV TZ="Asia/Yekaterinburg"
 
-ENTRYPOINT ["gunicorn", "src.main:app"]
+ENTRYPOINT ["gunicorn", "main:app"]
 CMD ["--bind", "0.0.0.0:80", "-k", "uvicorn.workers.UvicornWorker"]
