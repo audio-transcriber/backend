@@ -44,6 +44,7 @@ jobs:
 
   release:
     if: github.ref == 'refs/heads/main'
+    needs: [lint, test]
     runs-on: ubuntu-latest
 
     steps:
