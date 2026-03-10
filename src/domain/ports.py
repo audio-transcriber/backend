@@ -1,4 +1,4 @@
-from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod, abstractproperty
 from typing import Protocol
 
 
@@ -35,6 +35,16 @@ class BytesStorage(ABC):
 
     @abstractmethod
     async def get(self, filename: str, bucket_name: str) -> bytes:
+        pass
+
+
+class BytesConvertor(ABC):
+    @abstractmethod
+    async def convert(self, content: bytes) -> bytes:
+        pass
+
+    @abstractproperty
+    def format(self) -> str:
         pass
 
 

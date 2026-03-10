@@ -1,3 +1,5 @@
+from pathlib import Path
+
 from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, UploadFile
 from starlette.responses import Response
@@ -5,6 +7,7 @@ from starlette.status import HTTP_200_OK, HTTP_202_ACCEPTED
 
 from application.containers import TranscriptionContainer
 from application.transcription.usecases import TranscriptionUseCase
+from infrastructure.docx import DocxConvertor
 
 route = APIRouter(prefix='/transcription', tags=['Transcription'])
 
@@ -26,7 +29,7 @@ async def get_result(
     usecase: TranscriptionUseCase = Depends(Provide[TranscriptionContainer.usecase]),
 ) -> None:
     return Response(
-        content=await usecase.get_result(filename, bucket_name),
-        media_type='text/plain',
-        headers={'Content-Disposition': f'attachment; filename={filename}'},
+        content=await usecase.get_result(filename, bucket_name, DocxConvertor()),
+        media_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        headers={'Content-Disposition': f'attachment; filename={Path(filename).with_suffix(".docx").name}'},
     )

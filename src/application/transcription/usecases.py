@@ -2,7 +2,7 @@ import json
 
 import socketio
 
-from domain.ports import BytesStorage, Logger, MessageBrokerProducer
+from domain.ports import BytesConvertor, BytesStorage, Logger, MessageBrokerProducer
 
 
 class TranscriptionUseCase:
@@ -29,5 +29,8 @@ class TranscriptionUseCase:
         await self._sio.emit('transcribe_done', {'filename': filename, 'bucket_name': bucket_name})
         self._logger.info(f'Событие об успешной обработке {filename} отправлено')
 
-    async def get_result(self, filename: str, bucket_name: str) -> bytes:
-        return await self._bytes_storage.get(filename, bucket_name)
+    async def get_result(self, filename: str, bucket_name: str, bytes_convertor: BytesConvertor) -> bytes:
+        txt_bytes = await self._bytes_storage.get(filename, bucket_name)
+        converted_bytes = await bytes_convertor.convert(txt_bytes)
+        self._logger.info(f'Файл {filename} успешно преобразован в формат {bytes_convertor.format}')
+        return converted_bytes
