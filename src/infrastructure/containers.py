@@ -11,6 +11,7 @@ from infrastructure.storages.minio.adapters import MinIOStorage
 class SocketIOContainer(containers.DeclarativeContainer):
     sio = providers.Singleton(
         socketio.AsyncServer,
+        logger=True,
         async_mode='asgi',
         transports=['websocket'],
         cors_allowed_origins='*',

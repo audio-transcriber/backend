@@ -1,4 +1,31 @@
 from abc import ABC, abstractmethod
+from typing import Protocol
+
+
+class Logger(Protocol):
+    @abstractmethod
+    def debug(self, msg: str) -> None:
+        pass
+
+    @abstractmethod
+    def info(self, msg: str) -> None:
+        pass
+
+    @abstractmethod
+    def warning(self, msg: str) -> None:
+        pass
+
+    @abstractmethod
+    def exception(self, msg: str) -> None:
+        pass
+
+    @abstractmethod
+    def error(self, msg: str) -> None:
+        pass
+
+    @abstractmethod
+    def critical(self, msg: str) -> None:
+        pass
 
 
 class BytesStorage(ABC):

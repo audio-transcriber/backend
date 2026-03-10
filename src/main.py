@@ -7,7 +7,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 import application.containers
 import infrastructure.containers
-from config import minio_settings, rabbitmq_settings
+from config.minio import minio_settings
+from config.rabbitmq import rabbitmq_settings
 from presentation.http.transcription.route import route as transcription_route
 
 sio_container = infrastructure.containers.SocketIOContainer()
@@ -28,7 +29,7 @@ transcription_container = application.containers.TranscriptionContainer(
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI) -> None:
+async def lifespan(app_: FastAPI) -> None:
     await rabbitmq_container.init_resources()
     consumer = await rabbitmq_container.consumer()
     consumer_task = asyncio.create_task(
@@ -42,21 +43,14 @@ async def lifespan(app: FastAPI) -> None:
     await rabbitmq_container.shutdown_resources()
 
 
-def init_fastapi() -> FastAPI:
-    app = FastAPI(lifespan=lifespan, root_path='/api')
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=['*'],
-    )
-    app.include_router(transcription_route)
-    return app
+app = FastAPI(lifespan=lifespan, root_path='/api')
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=['*'],
+)
+app.include_router(transcription_route)
 
+sio = sio_container.sio()
+ws_app = socketio.ASGIApp(sio, socketio_path='')
 
-def init_socketio() -> socketio.AsyncServer:
-    sio = sio_container.sio()
-    return sio
-
-
-http_app = init_fastapi()
-ws_app = init_socketio()
-app = socketio.ASGIApp(ws_app, other_asgi_app=http_app)
+app.mount('/ws', ws_app)

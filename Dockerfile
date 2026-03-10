@@ -20,4 +20,8 @@ ENV PATH="/opt/app/.venv/bin:$PATH"
 ENV TZ="Asia/Yekaterinburg"
 
 ENTRYPOINT ["gunicorn", "main:app"]
-CMD ["--bind", "0.0.0.0:80", "-k", "uvicorn.workers.UvicornWorker"]
+CMD ["--bind", "0.0.0.0:80", \
+    "-k", "uvicorn.workers.UvicornWorker", \
+    "--log-level", "debug", \
+    "--access-logfile", "logs/gunicorn.log", \
+    "--error-logfile", "logs/gunicorn.log"]

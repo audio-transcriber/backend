@@ -1,6 +1,7 @@
 from dependency_injector import containers, providers
 
 from application.transcription.usecases import TranscriptionUseCase
+from config.logging import transcription_logger
 
 
 class TranscriptionContainer(containers.DeclarativeContainer):
@@ -15,4 +16,5 @@ class TranscriptionContainer(containers.DeclarativeContainer):
         sio_container.sio,
         providers.Factory(bytes_storage_container.adapter),
         providers.Factory(message_broker_container.producer),
+        providers.Object(transcription_logger),
     )
