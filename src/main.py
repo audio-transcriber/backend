@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import application.containers
 import infrastructure.containers
 from config.minio import minio_settings
+from config.fastapi import fastapi_settings
 from config.rabbitmq import rabbitmq_settings
 from presentation.http.transcription.route import route as transcription_route
 
@@ -46,7 +47,8 @@ async def lifespan(app_: FastAPI) -> None:
 app = FastAPI(lifespan=lifespan, root_path='/api')
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=['*'],
+    allow_origins=fastapi_settings.allow_origins,
+    expose_headers=["Content-Disposition"],
 )
 app.include_router(transcription_route)
 

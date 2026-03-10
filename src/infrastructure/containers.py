@@ -4,6 +4,7 @@ from boto3 import client as boto3_client
 from botocore.client import Config as BotoConfig
 from dependency_injector import containers, providers
 
+from config.socketio import socketio_settings
 from infrastructure.messages.rabbitmq.adapters import RabbitMQConsumer, RabbitMQProducer
 from infrastructure.storages.minio.adapters import MinIOStorage
 
@@ -14,7 +15,7 @@ class SocketIOContainer(containers.DeclarativeContainer):
         logger=True,
         async_mode='asgi',
         transports=['websocket'],
-        cors_allowed_origins='*',
+        cors_allowed_origins=socketio_settings.cors_allowed_origins,
     )
 
 
