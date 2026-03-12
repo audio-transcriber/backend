@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, UploadFile, Form, File
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 from starlette.responses import Response
 from starlette.status import HTTP_200_OK, HTTP_202_ACCEPTED
 
