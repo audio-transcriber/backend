@@ -33,4 +33,4 @@ class RabbitMQConsumer:
             async for message in queue_iter:
                 async with message.process():
                     body = json.loads(message.body.decode())
-                    await usecase.receive_transcribe(body['filename'], body['bucket_name'])
+                    await usecase.receive_transcribe(body['sid'], body['filename'], body['bucket_name'])

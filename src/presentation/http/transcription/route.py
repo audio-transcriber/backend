@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, UploadFile
+from fastapi import APIRouter, Depends, UploadFile, Form, File
 from starlette.responses import Response
 from starlette.status import HTTP_200_OK, HTTP_202_ACCEPTED
 
@@ -15,10 +15,11 @@ route = APIRouter(prefix='/transcription', tags=['Transcription'])
 @route.post('/transcribe', status_code=HTTP_202_ACCEPTED)
 @inject
 async def transcribe(
-    file: UploadFile,
+    sid: str = Form(...),
+    file: UploadFile = File(...),
     usecase: TranscriptionUseCase = Depends(Provide[TranscriptionContainer.usecase]),
 ) -> None:
-    await usecase.send_transcribe(await file.read(), file.filename)
+    await usecase.send_transcribe(sid, await file.read(), file.filename)
 
 
 @route.get('/get_result', status_code=HTTP_200_OK)

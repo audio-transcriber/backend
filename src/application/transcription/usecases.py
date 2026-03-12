@@ -18,15 +18,15 @@ class TranscriptionUseCase:
         self._message_broker_producer = message_broker_producer
         self._logger = logger
 
-    async def send_transcribe(self, content: bytes, filename: str) -> None:
+    async def send_transcribe(self, sid: str, content: bytes, filename: str) -> None:
         await self._bytes_storage.save(content, filename)
         self._logger.info(f'Файл {filename} добавлен в хранилище')
-        msg = {'filename': filename, 'bucket_name': 'general'}
+        msg = {'sid': sid, 'filename': filename, 'bucket_name': 'general'}
         await self._message_broker_producer.send(json.dumps(msg).encode(), 'transcription_todo')
         self._logger.info(f'Запрос на обработку {filename} отправлен')
 
-    async def receive_transcribe(self, filename: str, bucket_name: str) -> None:
-        await self._sio.emit('transcribe_done', {'filename': filename, 'bucket_name': bucket_name})
+    async def receive_transcribe(self, sid: str, filename: str, bucket_name: str) -> None:
+        await self._sio.emit('transcribe_done', {'filename': filename, 'bucket_name': bucket_name}, sid)
         self._logger.info(f'Событие об успешной обработке {filename} отправлено')
 
     async def get_result(self, filename: str, bucket_name: str, bytes_convertor: BytesConvertor) -> bytes:
